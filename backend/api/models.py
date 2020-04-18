@@ -52,7 +52,7 @@ class Email(models.Model):
         }
         return dict(filter(lambda item: item[1], header_fields.items()))
 
-    def send(self, connection: BaseEmailBackend):
+    def send(self, connection: BaseEmailBackend) -> bool:
         message = EmailMessage(
             subject=self.subject,
             body=self.body,

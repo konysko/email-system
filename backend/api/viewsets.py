@@ -3,6 +3,7 @@ from rest_framework import viewsets, status
 from rest_framework import mixins
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from api.models import Email
@@ -20,7 +21,7 @@ class EmailViewSet(mixins.UpdateModelMixin,
 
     @swagger_auto_schema(responses={200: EmailSerializer(many=True)})
     @action(methods=['POST'], detail=False, serializer_class=SMTPSerializer)
-    def send(self, request):
+    def send(self, request: Request) -> Response:
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.save()
@@ -32,6 +33,6 @@ class EmailViewSet(mixins.UpdateModelMixin,
             parser_classes=[MultiPartParser, FormParser],
             serializer_class=AttachmentSerializer
             )
-    def add_attachment(self, request, *args, **kwargs):
-        super().update(request, *args, **kwargs)
+    def add_attachment(self, request: Request, pk: int) -> Response:
+        super().update(request, pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
